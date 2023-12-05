@@ -1,3 +1,4 @@
+
 const dummy = (blogs) => {
     return 1;
 }
@@ -12,7 +13,6 @@ const favoriteBlog = (blogs) => {
     const likes = (blogs.map(blog => Number(blog.likes)))
     const mostLikes = Math.max(...likes)
     const blogi = blogs.find(blog => blog.likes === mostLikes)
-    console.log(blogi)
     return blogi
 }
 
@@ -32,6 +32,7 @@ const mostBlogs = (blogs) => {
 
     const authorsBlogs = blogCountByAuthor.map(author => Number(author.blogs))
     const mostBlogs = Math.max(...authorsBlogs)
+
     return blogCountByAuthor.find(author => author.blogs === mostBlogs)
 }
 
