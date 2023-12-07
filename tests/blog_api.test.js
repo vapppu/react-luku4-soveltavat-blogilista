@@ -127,6 +127,27 @@ test('Invalid blog is not added to database', async () => {
         .expect(400)
 })
 
+test('Blog without likes is added with 0 likes', async () => {
+    const blogWithoutLikes = {
+        title: "Ei tykkäyksiä",
+        author: "Liisa Liketön",
+        url: "nolikes.com"
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(blogWithoutLikes)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    const blogsAtEnd = response.body
+    expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
+
+    const titles = blogsAtEnd.map(blog => blog.title)
+    expect(titles).toContain(blogWithoutLikes.title)
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
