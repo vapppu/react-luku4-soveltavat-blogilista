@@ -144,8 +144,13 @@ test('Blog without likes is added with 0 likes', async () => {
     const blogsAtEnd = response.body
     expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
 
+    const addedBlog = blogsAtEnd.find(blog => blog.title === blogWithoutLikes.title)
+    expect(addedBlog.likes).toBe(0)
+
     const titles = blogsAtEnd.map(blog => blog.title)
     expect(titles).toContain(blogWithoutLikes.title)
+
+    // TODO: Tarkista että blogilla on likeissä 0!
 })
 
 afterAll(async () => {
