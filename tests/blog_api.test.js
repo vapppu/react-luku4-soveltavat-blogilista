@@ -27,8 +27,6 @@ beforeEach(async () => {
         .map(blog => new Blog(blog))
     const promiseArray = blogObjects.map(blog => blog.save())
     await Promise.all(promiseArray)
-
-    // KORJAA TÄHÄN ETTÄ SUORITETAAN KOKO TAULUKOLLE
 })
 
 test('all blogs are returned', async () => {
@@ -65,6 +63,12 @@ test('new blog post is added to blog list', async () => {
     expect(response.body).toHaveLength(initialBlogs.length + 1)
     expect(titles).toContain(newBlog.title)
 
+})
+
+test('Blog will have an ID', async () => {
+    const response = await api.get('/api/blogs')
+    const blogs = response.body
+    expect(blogs[0].id).toBeDefined();
 })
 
 afterAll(async () => {
