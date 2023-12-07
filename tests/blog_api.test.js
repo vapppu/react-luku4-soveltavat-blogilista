@@ -71,6 +71,62 @@ test('Blog will have an ID', async () => {
     expect(blogs[0].id).toBeDefined();
 })
 
+test('New blog is added to database', async () => {
+    const newBlog = {
+        title: 'Testauksen salat',
+        author: 'Terhi Testeri',
+        url: 'terhintestaukset.com',
+        likes: '78'
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    const blogsAtEnd = response.body
+    expect(blogsAtEnd).toHaveLength(initialBlogs.length + 1)
+
+    const titles = blogsAtEnd.map(blog => blog.title)
+    expect(titles).toContain(newBlog.title)
+})
+
+test('Invalid blog is not added to database', async () => {
+    const blogWithoutTitle = {
+        author: "Kirjoittaja",
+        url: "kirjoittaja.com"
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(blogWithoutTitle)
+        .expect(400)
+
+    const blogWithoutAuthor = {
+        title: "Kirjoitin itse itseni",
+        url: "itsekirjoittaja.fi",
+        likes: 10
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(blogWithoutAuthor)
+        .expect(400)
+
+    const blogWithoutUrl = {
+        title: "En ole netissä",
+        author: "Neiti Netitön",
+        likes: 2
+    }
+
+    await api
+        .post('/api/blogs')
+        .send(blogWithoutUrl)
+        .expect(400)
+})
+
 afterAll(async () => {
     await mongoose.connection.close()
 })
