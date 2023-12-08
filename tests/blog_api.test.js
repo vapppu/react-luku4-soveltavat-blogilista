@@ -34,6 +34,22 @@ test('single blog is returned with specified ID', async () => {
     expect(resultBlog.body).toEqual(initialBlog)
 })
 
+test('fails with statuscode 404 if blog does not exist', async () => {
+    const validNonexistingId = await helper.nonExistingId()
+
+    await api
+        .get(`/api/blogs/${validNonexistingId}`)
+        .expect(404)
+})
+
+test('fails with statuscode 400 id is invalid', async () => {
+    const invalidId = '5a3d5da59070081a82a3445'
+
+    await api
+        .get(`/api/blogs/${invalidId}`)
+        .expect(400)
+})
+
 test('new blog post is added to blog list', async () => {
     const newBlog =
     {
