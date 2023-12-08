@@ -23,10 +23,8 @@ const initialBlogs = [
 
 beforeEach(async () => {
     await Blog.deleteMany({})
-    let blogObjects = initialBlogs
-        .map(blog => new Blog(blog))
-    const promiseArray = blogObjects.map(blog => blog.save())
-    await Promise.all(promiseArray)
+    await Blog.insertMany(initialBlogs)
+
 })
 
 test('all blogs are returned', async () => {
@@ -99,20 +97,9 @@ test('Invalid blog is not added to database', async () => {
         url: "kirjoittaja.com"
     }
 
-    await api
+    const insertBlogWithoutTitle = await api
         .post('/api/blogs')
         .send(blogWithoutTitle)
-        .expect(400)
-
-    const blogWithoutAuthor = {
-        title: "Kirjoitin itse itseni",
-        url: "itsekirjoittaja.fi",
-        likes: 10
-    }
-
-    await api
-        .post('/api/blogs')
-        .send(blogWithoutAuthor)
         .expect(400)
 
     const blogWithoutUrl = {
@@ -121,10 +108,18 @@ test('Invalid blog is not added to database', async () => {
         likes: 2
     }
 
-    await api
+    const insertBlogWithoutUrl = await api
         .post('/api/blogs')
         .send(blogWithoutUrl)
         .expect(400)
+
+    const promiseArray = [insertBlogWithoutTitle, insertBlogWithoutUrl]
+    await Promise.all(promiseArray)
+
+    const response = await api.get('/api/blogs')
+    const blogsAtEnd = response.body
+    expect(blogsAtEnd).toHaveLength(initialBlogs.length)
+
 })
 
 test('Blog without likes is added with 0 likes', async () => {
@@ -150,7 +145,6 @@ test('Blog without likes is added with 0 likes', async () => {
     const titles = blogsAtEnd.map(blog => blog.title)
     expect(titles).toContain(blogWithoutLikes.title)
 
-    // TODO: Tarkista että blogilla on likeissä 0!
 })
 
 afterAll(async () => {
