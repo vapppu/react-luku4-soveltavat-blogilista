@@ -137,6 +137,25 @@ describe('When there is initally some blogs saved', () => {
 
         })
     })
+
+    describe('blog can be deleted', () => {
+        test('Blog with valid ID is deleted', async () => {
+
+            const blogToBeDeleted = helper.initialBlogs[0]
+
+            await api
+                .delete(`/api/blogs/${blogToBeDeleted.id}`)
+                .expect(204)
+        })
+
+        test('fails with statuscode 400 id is invalid', async () => {
+            const invalidId = '5a3d5da59070081a82a3445'
+
+            await api
+                .delete(`/api/blogs/${invalidId}`)
+                .expect(400)
+        })
+    })
 })
 afterAll(async () => {
     await mongoose.connection.close()
