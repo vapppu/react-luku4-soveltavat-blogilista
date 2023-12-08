@@ -39,6 +39,18 @@ test('notes are returned as json', async () => {
         .expect('Content-Type', /application\/json/)
 })
 
+test('single blog is returned with specified ID', async () => {
+
+    const initialBlog = initialBlogs[0]
+
+    const resultBlog = await api
+        .get(`/api/blogs/${initialBlog.id}`)
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+
+    expect(resultBlog.body).toEqual(initialBlog)
+})
+
 test('new blog post is added to blog list', async () => {
     const newBlog =
     {
