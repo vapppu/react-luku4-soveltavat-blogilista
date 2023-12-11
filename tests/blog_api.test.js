@@ -156,6 +156,39 @@ describe('When there is initally some blogs saved', () => {
                 .expect(400)
         })
     })
+
+    describe('blog can be updated', () => {
+        test('Blog with valid id and valid replacing data is updated in the database', async () => {
+            const updatedBlog = { ...helper.initialBlogs[0], likes: 80 }
+            console.log(updatedBlog)
+
+            await api
+                .put(`/api/blogs/${updatedBlog.id}`)
+                .send(updatedBlog)
+                .expect(200)
+
+            const blogInDb = await api.get(`/api/blogs/${updatedBlog.id}`)
+            expect(blogInDb.body).toEqual(updatedBlog)
+        })
+
+        test('Blog with invalid ID is not updated', async () => {
+            const invalidId = helper.nonExistingId()
+            await api
+                .put(`/api/blogs/${invalidId}`)
+                .send({ content: "Some content" })
+                .expect(400)
+        })
+
+        test('Blog widh invalid data is not updated', async () => {
+            const validId = helper.initialBlogs[0].id
+            const newBlog = { content: "I don't have title or url!" }
+            await api
+                .put(`/api/blogs/${validId}`)
+                .send(newBlog)
+                .expect(400)
+
+        })
+    })
 })
 afterAll(async () => {
     await mongoose.connection.close()
