@@ -13,23 +13,17 @@ describe('when there is initially one user at db', () => {
         const passwordHash = await bcrypt.hash('sekret', 10)
         const user = new User({ username: 'root', passwordHash })
 
-        console.log(user)
-
         await user.save()
     })
 
     test('creation succeeds with a fresh username', async () => {
         const usersAtStart = await helper.usersInDb()
 
-        console.log(usersAtStart)
-
         const newUser = {
             username: 'veerahi',
             name: 'Veera Hiltunen',
             password: 'salainen'
         }
-
-        console.log(newUser)
 
         await api
             .post('/api/users')
@@ -39,7 +33,6 @@ describe('when there is initially one user at db', () => {
 
         const usersAtEnd = await helper.usersInDb()
 
-        console.log(usersAtEnd)
         expect(usersAtEnd).toHaveLength(usersAtStart.length + 1)
 
         const usernames = usersAtEnd.map(u => u.username)
