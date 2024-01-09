@@ -59,4 +59,48 @@ describe('when there is initially one user at db', () => {
         const usersAtEnd = await helper.usersInDb()
         expect(usersAtEnd).toHaveLength(usersAtStart.length)
     })
+
+    test('creation fails if username is not given', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const userWithoutUsername = {
+            name: 'No Username',
+            password: 'passwordofnousername'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(userWithoutUsername)
+            .expect(400)
+            .expect('Content-TYpe', /application\/json/)
+
+        console.log(result.body.error)
+
+        expect(result.body.error).toContain('`username` is required')
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
+
+    test('creation fails if password is not given', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const userWithoutPassword = {
+            username: 'nopwd',
+            name: 'Without Password'
+        }
+
+        const result = await api
+            .post('/api/users')
+            .send(userWithoutPassword)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        console.log(result.body.error)
+
+        expect(result.body.error).toContain('password missing')
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+    })
 })
