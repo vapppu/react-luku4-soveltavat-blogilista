@@ -103,4 +103,40 @@ describe('when there is initially one user at db', () => {
         const usersAtEnd = await helper.usersInDb()
         expect(usersAtEnd).toHaveLength(usersAtStart.length)
     })
+
+    test('creation fails if username or password is shorter than 3 characters', async () => {
+        const usersAtStart = await helper.usersInDb()
+
+        const userWithShortUsername = {
+            username: 'ab',
+            name: 'Liisa Ihmemaassa',
+            password: 'liisansalasana'
+        }
+
+        const shortUsernameResult = await api
+            .post('/api/users')
+            .send(userWithShortUsername)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        expect(shortUsernameResult.body.error).toContain('shorter than the minimum allowed length (3)')
+
+        const userWithShortPassword = {
+            username: 'kayttaja',
+            name: 'Liisa Joulumaassa',
+            password: 'sa'
+        }
+
+        const shortPasswordResult = await api
+            .post('/api/users')
+            .send(userWithShortPassword)
+            .expect(400)
+            .expect('Content-Type', /application\/json/)
+
+        expect(shortPasswordResult.body.error).toContain('password too short')
+
+        const usersAtEnd = await helper.usersInDb()
+        expect(usersAtEnd).toHaveLength(usersAtStart.length)
+
+    })
 })
