@@ -1,0 +1,10 @@
+post http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RhYWphIiwiaWQiOiI2NTlkNTEzMGQyYjNlNzVkNjMyZTU1MjIiLCJpYXQiOjE3MDQ4MDkyODd9.2BAQvppSAiPCUzjcDXfsBhy4Yrz6h-Ld5oEOOhfH2LQ
+
+{
+    "title": "uusiblogi",
+    "author": "Kirjalija",
+    "url": "osoite.com",
+    "likes": 2
+}
